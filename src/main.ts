@@ -11,8 +11,8 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus) //将 ElementPlus 插件注册到 Vue 应用中
+
+app.mount('#app')
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-
-app.mount('#app')
