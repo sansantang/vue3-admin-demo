@@ -1,5 +1,5 @@
 <template>
-    <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-menu-vertical-demo" default-active="2"
+    <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-aside" default-active="2"
         text-color="#fff" @open="handleOpen" @close="handleClose">
         <h3>通用管理界面</h3>
         <template v-for="item in list" :key="item.path">
@@ -25,7 +25,6 @@
             </el-menu-item>
         </template>
     </el-menu>
-
 </template>
 
 <script setup lang="ts">
@@ -85,4 +84,13 @@ const handleClose = (key: string, keyPath: string[]) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+h3 {
+    color: #fff;
+    text-align: center;
+}
+
+.el-aside {
+    height: 100vh;
+}
+</style>
