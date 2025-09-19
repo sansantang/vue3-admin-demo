@@ -2,27 +2,28 @@
     <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-menu-vertical-demo" default-active="2"
         text-color="#fff" @open="handleOpen" @close="handleClose">
         <h3>通用管理界面</h3>
-        <div v-for="item in list" :index="item.path" :key="item.path">
-            <div :if="item.children">
-                <el-sub-menu>
-                    <template #title>
-                        <el-icon>
-                            <component :is="item.icon" />
-                        </el-icon>
-                        <span>{{ item.label }}</span>
-                    </template>
-                    </el-menu-item>
-                </el-sub-menu>
-            </div>
-            <div :if="!item.children">
-                <el-menu-item>
+        <template v-for="item in list" :key="item.path">
+            <el-sub-menu :index="item.path" v-if="item.children && item.children.length > 0">
+                <template #title>
                     <el-icon>
                         <component :is="item.icon" />
                     </el-icon>
                     <span>{{ item.label }}</span>
+                </template>
+                <el-menu-item v-for="children in item.children" :key="children.path" :index="children.path">
+                    <el-icon>
+                        <component :is="children.icon" />
+                    </el-icon>
+                    {{ children.label }}
                 </el-menu-item>
-            </div>
-        </div>
+            </el-sub-menu>
+            <el-menu-item v-else :index="item.path">
+                <el-icon>
+                    <component :is="item.icon" />
+                </el-icon>
+                <span>{{ item.label }}</span>
+            </el-menu-item>
+        </template>
     </el-menu>
 
 </template>
@@ -75,13 +76,12 @@ const list = ref([
     }
 ]);
 
-const nochildren = computed(() => {
-    return list.value.filter(item => !item.children);
-});
-
-const hadchildren = computed(() => {
-    return list.value.filter(item => item.children);
-});
+const handleOpen = (key: string, keyPath: string[]) => {
+    console.log(key, keyPath)
+}
+const handleClose = (key: string, keyPath: string[]) => {
+    console.log(key, keyPath)
+}
 
 </script>
 
