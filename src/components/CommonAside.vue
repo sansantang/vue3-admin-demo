@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const list = ref([
     {
@@ -92,5 +92,7 @@ h3 {
 
 .el-aside {
     height: 100vh;
+    border: none;
+    /* 移除边框 */
 }
 </style>
