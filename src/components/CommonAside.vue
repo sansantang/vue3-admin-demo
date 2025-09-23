@@ -1,8 +1,10 @@
 <template>
     <el-aside :width="width">
         <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-aside" default-active="2"
-            text-color="#fff" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
-            <h3>{{ !isCollapse ? '通用管理后台' : '后台' }}</h3>
+            text-color="#fff" @open="handleOpen" @close="handleClose" :collapse="isCollapse"
+            collapse-transition="false">
+            <h3 v-show="!isCollapse">通用管理后台</h3>
+            <h3 v-show="isCollapse">后台</h3>
             <template v-for="item in list" :key="item.path">
                 <el-sub-menu :index="item.path" v-if="item.children && item.children.length > 0">
                     <template #title>

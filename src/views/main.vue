@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import CommonAside from "@/components/CommonAside.vue";
 import CommonHeader from "@/components/CommonHeader.vue";
 </script>
@@ -13,7 +13,9 @@ import CommonHeader from "@/components/CommonHeader.vue";
                     <CommonHeader />
                 </el-header>
                 <!-- 内容区域 -->
-                <el-main>Main</el-main>
+                <el-main>
+                    <RouterView />
+                </el-main>
             </el-container>
         </el-container>
     </div>
