@@ -1,35 +1,39 @@
 <template>
-    <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-aside" default-active="2"
-        text-color="#fff" @open="handleOpen" @close="handleClose">
-        <h3>通用管理界面</h3>
-        <template v-for="item in list" :key="item.path">
-            <el-sub-menu :index="item.path" v-if="item.children && item.children.length > 0">
-                <template #title>
+    <el-aside :width="width">
+        <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-aside" default-active="2"
+            text-color="#fff" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+            <h3>{{ !isCollapse ? '通用管理后台' : '后台' }}</h3>
+            <template v-for="item in list" :key="item.path">
+                <el-sub-menu :index="item.path" v-if="item.children && item.children.length > 0">
+                    <template #title>
+                        <el-icon>
+                            <component :is="item.icon" />
+                        </el-icon>
+                        <span>{{ item.label }}</span>
+                    </template>
+                    <el-menu-item v-for="children in item.children" :key="children.path" :index="children.path">
+                        <el-icon>
+                            <component :is="children.icon" />
+                        </el-icon>
+                        {{ children.label }}
+                    </el-menu-item>
+                </el-sub-menu>
+                <el-menu-item v-else :index="item.path">
                     <el-icon>
                         <component :is="item.icon" />
                     </el-icon>
                     <span>{{ item.label }}</span>
-                </template>
-                <el-menu-item v-for="children in item.children" :key="children.path" :index="children.path">
-                    <el-icon>
-                        <component :is="children.icon" />
-                    </el-icon>
-                    {{ children.label }}
                 </el-menu-item>
-            </el-sub-menu>
-            <el-menu-item v-else :index="item.path">
-                <el-icon>
-                    <component :is="item.icon" />
-                </el-icon>
-                <span>{{ item.label }}</span>
-            </el-menu-item>
-        </template>
-    </el-menu>
+            </template>
+        </el-menu>
+    </el-aside>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
+import { computed, ref } from 'vue';
+import { useMenuStore } from '@/stores/useMenuStore';
+const isCollapse = computed(() => useMenuStore().isCollapse);
+const width = computed(() => isCollapse.value ? '64px' : '200px');
 const list = ref([
     {
         path: '/home',

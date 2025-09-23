@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="l-content">
-            <el-button size="small">
+            <el-button size="small" @click="changeIsCollapse">
                 <el-icon>
                     <component class="icons" :is="'menu'"></component>
                 </el-icon>
@@ -28,6 +28,8 @@
 
 <script setup lang="ts">
 const getImageUrl = new URL("https://img2.baidu.com/it/u=2318884743,3754999155&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500").href;
+import { useMenuStore } from '@/stores/useMenuStore'
+const changeIsCollapse = useMenuStore().changeIsCollapse;
 </script>
 
 <style scoped>
