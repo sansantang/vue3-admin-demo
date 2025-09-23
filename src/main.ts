@@ -6,9 +6,11 @@ import router from './router'
 import ElementPlus from 'element-plus' //导入element-plus组件库
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import homeApi from '@/api/homeApi'
 import '@/api/mock'
-const app = createApp(App)
 
+const app = createApp(App)
+app.config.globalProperties.$homeApi = homeApi
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus) //将 ElementPlus 插件注册到 Vue 应用中
