@@ -5,7 +5,7 @@ import request from './request'
 export default {
   getTableData() {
     return request({
-      url: '/api/home/getTableData',
+      url: 'http://localhost:8080/api/home/getTableData',
       method: 'get',
     })
   },

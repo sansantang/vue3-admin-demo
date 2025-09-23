@@ -44,14 +44,11 @@ import { getCurrentInstance, ref, onMounted } from 'vue'
 
 const getImageUrl = new URL("https://img2.baidu.com/it/u=2318884743,3754999155&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500").href;
 const instance = getCurrentInstance();
+
 if (!instance) {
     throw new Error('getCurrentInstance() returned null');
 }
 const { proxy } = instance;
-
-
-// 定义表格数据类型接口
-
 
 // 表格数据
 const tableData = ref<TableItem[]>([]);

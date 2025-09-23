@@ -1,7 +1,11 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
 
-const service = axios.create()
+// 创建axios实例
+const service = axios.create({
+  timeout: 10000, // 请求超时时间
+})
+
 // 添加请求拦截器
 service.interceptors.request.use(
   function (config) {
@@ -15,16 +19,32 @@ service.interceptors.request.use(
 )
 
 // 添加响应拦截器
-service.interceptors.response.use((res) => {
-  const { status, data, statusText } = res
-  if (status === 200) {
-    return data
-  } else {
-    const NETWORK_ERROR = '网络请求出错'
-    ElMessage.error(statusText || NETWORK_ERROR)
-    return Promise.reject(statusText || NETWORK_ERROR)
-  }
-})
+service.interceptors.response.use(
+  (res) => {
+    const { status, data, statusText } = res
+    if (status === 200) {
+      return data
+    } else {
+      const NETWORK_ERROR = '网络请求出错'
+      ElMessage.error(statusText || NETWORK_ERROR)
+      return Promise.reject(statusText || NETWORK_ERROR)
+    }
+  },
+  (error) => {
+    // 处理网络错误、超时等情况
+    if (error.response) {
+      // 服务器返回了错误状态码
+      ElMessage.error(`请求失败: ${error.response.status}`)
+    } else if (error.request) {
+      // 请求已发送但没有收到响应
+      ElMessage.error('网络连接失败')
+    } else {
+      // 设置请求时发生错误
+      ElMessage.error('请求配置错误')
+    }
+    return Promise.reject(error)
+  },
+)
 
 function request(options: AxiosRequestConfig) {
   options.method = options.method || 'get'
