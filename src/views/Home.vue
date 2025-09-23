@@ -24,6 +24,12 @@
                     </div>
                 </template>
             </el-card>
+
+            <el-card class="card_table">
+                <el-table :data="tableData">
+                    <el-table-column v-for="(value, key) in tableLabel" :key="key" :prop="key" :label="value" />
+                </el-table>
+            </el-card>
         </div>
         <div class="right">
 
@@ -33,7 +39,33 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 const getImageUrl = new URL("https://img2.baidu.com/it/u=2318884743,3754999155&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500").href;
+
+// 表格数据
+const tableData = ref([
+    {
+        name: "Java",
+        todayBuy: 100,
+        monthBuy: 200,
+        totalBuy: 300,
+    },
+    {
+        name: "Python",
+        todayBuy: 100,
+        monthBuy: 200,
+        totalBuy: 300,
+    }
+]);
+
+// 表格列标签
+const tableLabel = ref({
+    name: "课程",
+    todayBuy: "今日购买",
+    monthBuy: "本月购买",
+    totalBuy: "总购买",
+});
 </script>
 
 <style scoped>
@@ -70,6 +102,10 @@ const getImageUrl = new URL("https://img2.baidu.com/it/u=2318884743,3754999155&f
         span {
             color: #000;
         }
+    }
+
+    .card_table {
+        margin-top: 20px;
     }
 }
 
