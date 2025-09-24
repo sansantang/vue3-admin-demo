@@ -21,5 +21,5 @@ const currentEnvConfig = EnvConfig[env] || EnvConfig.prod
 export default {
   env,
   baseURL: currentEnvConfig.baseURL,
-  mock: false,
+  mock: true,
 }

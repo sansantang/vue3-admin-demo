@@ -9,4 +9,11 @@ export default {
       method: 'get',
     })
   },
+
+  getCountData() {
+    return request({
+      url: '/api/home/getCountData',
+      method: 'get',
+    })
+  },
 }

@@ -32,7 +32,20 @@
             </el-card>
         </div>
         <div class="right">
-
+            <el-card>
+                <div class="card_count">
+                    <div class="card_count_item" v-for="value in tableCountData" :key="value.name">
+                        <div class="icons_box" :style="{ backgroundColor: value.color }">
+                            <component :is="value.icon" class="icons">
+                            </component>
+                        </div>
+                        <div class="count_info">
+                            <p class="count_text">￥{{ value.value }}</p>
+                            <p class="count_name">{{ value.name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </el-card>
         </div>
     </div>
 
@@ -52,6 +65,7 @@ const { proxy } = instance;
 
 // 表格数据
 const tableData = ref<TableItem[]>([]);
+const tableCountData = ref();
 
 // 表格列标签
 const tableLabel = ref({
@@ -64,7 +78,7 @@ const tableLabel = ref({
 async function getTableData() {
     try {
         const res = await proxy!.$homeApi.getTableData();
-        console.log(res);
+        // console.log(res);
         if (Array.isArray(res.data)) {
             tableData.value = res.data;
         } else if (res.data) {
@@ -81,16 +95,32 @@ async function getTableData() {
     }
 }
 
+async function getCountData() {
+    try {
+        const res = await proxy!.$homeApi.getCountData();
+        tableCountData.value = res.data;
+        console.log(res);
+    } catch (error) {
+        console.error('获取Count数据失败:', error);
+    }
+}
+
 onMounted(() => {
     getTableData();
+    getCountData();
 });
 
 </script>
 
 <style scoped>
+.content {
+    display: flex;
+}
+
 .left {
     width: 30%;
     background-color: bisque;
+    margin-right: 2%;
 
     .userIcon {
         width: 100px;
@@ -133,8 +163,52 @@ onMounted(() => {
 }
 
 .right {
-    width: 70%;
+    width: 68%;
     background-color: aqua;
+
+    .card_count {
+        display: flex;
+        flex-wrap: wrap;
+        /*justify-content: space-between; */
+
+        .card_count_item {
+            width: 30%;
+            margin-bottom: 20px;
+            margin-right: 2%;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+            .icons_box {
+                width: 100px;
+                height: 100px;
+                /* background-color: #fff; */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .icons {
+                width: 50px;
+                height: 50px;
+                color: #fff;
+            }
+
+            .count_info {
+                margin-left: 5px;
+            }
+
+            .count_text {
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .count_name {
+                font-size: 14px;
+                color: grey;
+            }
+        }
+    }
 }
 
 :deep(.el-card__footer) {
