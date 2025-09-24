@@ -1,9 +1,10 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
-
+import config from '../config'
 // 创建axios实例
 const service = axios.create({
-  timeout: 10000, // 请求超时时间
+  // timeout: 30000, // 请求超时时间
+  baseURL: config.baseURL,
 })
 
 // 添加请求拦截器
@@ -48,6 +49,17 @@ service.interceptors.response.use(
 
 function request(options: AxiosRequestConfig) {
   options.method = options.method || 'get'
+  if (options.method.toLowerCase() === 'get') {
+    options.params = options.data
+  }
+
+  // 在mock模式下，不设置baseURL，让Mock.js拦截请求
+  if (config.env !== 'prod' && config.mock) {
+    service.defaults.baseURL = ''
+  } else {
+    service.defaults.baseURL = config.baseURL
+  }
+
   return service(options)
 }
 
