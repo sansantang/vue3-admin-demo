@@ -46,6 +46,8 @@
                     </div>
                 </div>
             </el-card>
+
+            <div id="chart" style="width: 600px; height: 400px;"></div>
         </div>
     </div>
 
@@ -54,6 +56,9 @@
 <script setup lang="ts">
 import type { TableItem } from '@/interface/TableItem';
 import { getCurrentInstance, ref, onMounted } from 'vue'
+
+
+
 
 const getImageUrl = new URL("https://img2.baidu.com/it/u=2318884743,3754999155&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500").href;
 const instance = getCurrentInstance();
@@ -66,6 +71,7 @@ const { proxy } = instance;
 // 表格数据
 const tableData = ref<TableItem[]>([]);
 const tableCountData = ref();
+const chartData = ref();
 
 // 表格列标签
 const tableLabel = ref({
@@ -99,15 +105,25 @@ async function getCountData() {
     try {
         const res = await proxy!.$homeApi.getCountData();
         tableCountData.value = res.data;
-        console.log(res);
     } catch (error) {
         console.error('获取Count数据失败:', error);
+    }
+}
+
+async function getChartData() {
+    try {
+        const res = await proxy!.$homeApi.getChartData();
+        chartData.value = res.data;
+        console.log(res);
+    } catch (error) {
+        console.error('获取Chart数据失败:', error);
     }
 }
 
 onMounted(() => {
     getTableData();
     getCountData();
+    getChartData();
 });
 
 </script>
@@ -119,7 +135,7 @@ onMounted(() => {
 
 .left {
     width: 30%;
-    background-color: bisque;
+    /* background-color: bisque; */
     margin-right: 2%;
 
     .userIcon {
@@ -164,7 +180,7 @@ onMounted(() => {
 
 .right {
     width: 68%;
-    background-color: aqua;
+    /* background-color: aqua; */
 
     .card_count {
         display: flex;

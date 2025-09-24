@@ -16,4 +16,11 @@ export default {
       method: 'get',
     })
   },
+
+  getChartData() {
+    return request({
+      url: '/api/home/getChartData',
+      method: 'get',
+    })
+  },
 }
