@@ -8,6 +8,7 @@ import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import homeApi from '@/api/homeApi'
 import '@/api/mock'
+import 'default-passive-events'
 
 const app = createApp(App)
 app.config.globalProperties.$homeApi = homeApi

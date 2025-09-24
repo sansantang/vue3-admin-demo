@@ -47,7 +47,7 @@
                 </div>
             </el-card>
             <el-card>
-                <div id="chart" style=" height: 400px;"></div>
+                <div id="chart" ref="chart" style=" height: 400px;"></div>
             </el-card>
         </div>
     </div>
@@ -144,7 +144,11 @@ async function getChartData() {
         console.log('orderData', res.data.data.orderData);
         const { orderData, userData, videoData } = res.data.data;
         orderDataTemp = orderData;
-        const titlekeys = orderData.data.map((item: string) => Object.keys(item));
+        // orderDataTemp = {
+        //     date: [],
+        //     data: []
+        // };
+        const titlekeys = orderDataTemp.data.map((item: { [brand: string]: number }) => Object.keys(item));
         const titles: string[] = Array.from(new Set(titlekeys.flat()));
         console.log('titles', titles);
         const serieses: SeriesData[] = [];
@@ -166,7 +170,8 @@ async function getChartData() {
         })
 
         // 在组件挂载后初始化 ECharts
-        myChart = echarts.init(document.getElementById('chart'));
+        // myChart = echarts.init(document.getElementById('chart'));    
+        myChart = echarts.init(proxy?.$refs['chart'] as HTMLElement);
         // 绘制图表的配置项和数据
         const option = {
             title: {
