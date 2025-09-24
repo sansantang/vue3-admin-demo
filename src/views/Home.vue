@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import type { TableItem } from '@/interface/TableItem';
-import { getCurrentInstance, ref, onMounted } from 'vue'
+import { getCurrentInstance, ref, onMounted, onUnmounted } from 'vue'
 
 // 按需引入 ECharts 核心模块
 import * as echarts from 'echarts/core';
@@ -122,108 +122,120 @@ async function getCountData() {
     }
 }
 
+interface orderData {
+    date: string[];
+    data: { [brand: string]: number }[];
+}
+let orderDataTemp: orderData = {
+    date: [],
+    data: []
+};
+
+interface SeriesData {
+    name: string;
+    type: 'line';
+    stack: 'Total';
+    data: number[];
+}
 async function getChartData() {
     try {
         const res = await proxy!.$homeApi.getChartData();
         chartData.value = res.data;
-        console.log(res);
+        console.log('orderData', res.data.data.orderData);
+        const { orderData, userData, videoData } = res.data.data;
+        orderDataTemp = orderData;
+        const titlekeys = orderData.data.map((item: string) => Object.keys(item));
+        const titles: string[] = Array.from(new Set(titlekeys.flat()));
+        console.log('titles', titles);
+        const serieses: SeriesData[] = [];
+
+        titles.forEach((title: string) => {
+            orderDataTemp.data.forEach((item) => {
+                const find = serieses.find((x: SeriesData) => x.name === title);
+                if (find) {
+                    find.data.push(item[title]);
+                } else {
+                    serieses.push({
+                        name: title,
+                        type: 'line',
+                        stack: 'Total',
+                        data: [item[title]],
+                    });
+                }
+            });
+        })
+
+        // 在组件挂载后初始化 ECharts
+        myChart = echarts.init(document.getElementById('chart'));
+        // 绘制图表的配置项和数据
+        const option = {
+            title: {
+                // text: 'Stacked Line'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: titles,
+                top: 'top'
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                // 替换containLabel为outerBounds配置
+                outerBounds: {
+                    top: 50,
+                    bottom: 30
+                }
+            },
+            toolbox: {
+                feature: {
+                    // saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: orderDataTemp.date
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: serieses
+        };
+        myChart.setOption(option);
+
+        // 添加窗口大小变化时的响应式处理
+        const handleResize = () => {
+            if (myChart) {
+                myChart.resize();
+            }
+        };
+
+        // 使用passive选项添加事件监听器，提高滚动性能
+        window.addEventListener('resize', handleResize, { passive: true });
     } catch (error) {
         console.error('获取Chart数据失败:', error);
     }
 }
-
+let myChart: echarts.ECharts | null = null;
 onMounted(() => {
     getTableData();
     getCountData();
     getChartData();
 
-    // 在组件挂载后初始化 ECharts
-    const myChart = echarts.init(document.getElementById('chart'));
-    // 绘制图表的配置项和数据
-    // const option = {
-    //     title: {
-    //         text: 'ECharts 入门示例'
-    //     },
-    //     tooltip: {},
-    //     xAxis: {
-    //         type: 'category',
-    //         data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
-    //     },
-    //     yAxis: {
-    //         type: 'value'
-    //     },
-    //     series: [
-    //         {
-    //             name: '销量',
-    //             type: 'bar',
-    //             data: [5, 20, 36, 10, 10, 20]
-    //         }
-    //     ]
-    // };
 
-    const option = {
-        title: {
-            text: 'Stacked Line'
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        toolbox: {
-            feature: {
-                saveAsImage: {}
-            }
-        },
-        xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-                name: 'Email',
-                type: 'line',
-                stack: 'Total',
-                data: [120, 132, 101, 134, 90, 230, 210]
-            },
-            {
-                name: 'Union Ads',
-                type: 'line',
-                stack: 'Total',
-                data: [220, 182, 191, 234, 290, 330, 310]
-            },
-            {
-                name: 'Video Ads',
-                type: 'line',
-                stack: 'Total',
-                data: [150, 232, 201, 154, 190, 330, 410]
-            },
-            {
-                name: 'Direct',
-                type: 'line',
-                stack: 'Total',
-                data: [320, 332, 301, 334, 390, 330, 320]
-            },
-            {
-                name: 'Search Engine',
-                type: 'line',
-                stack: 'Total',
-                data: [820, 932, 901, 934, 1290, 1330, 1320]
-            }
-        ]
-    };
-    myChart.setOption(option);
+
+});
+
+onUnmounted(() => {
+    if (myChart) {
+        myChart.dispose();
+        myChart = null;
+    }
+    // 移除事件监听器
+    window.removeEventListener('resize', () => { });
 });
 
 </script>
