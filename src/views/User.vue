@@ -23,11 +23,16 @@
                 </template>
             </el-table-column>
         </el-table>
+        <div class="pagination">
+            <el-pagination background layout="prev, pager, next" size="small" :total="userConfig.total"
+                @current-change="handleCurrentChange" />
+        </div>
     </div>
 </template>
-<script setup lang="ts">
-import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
 
+<script setup lang="ts">
+
+import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 
 const instance = getCurrentInstance();
@@ -43,11 +48,18 @@ const searchForm = reactive({
     name: '',
 })
 
+const userConfig = reactive({
+    name: '',
+    total: 0,
+    page: 0
+})
+
 
 const submitForm = (formEl: FormInstance | undefined) => {
     console.log('formEl', formEl)
     console.log('searchForm', searchForm)
-    getUserData(searchForm);
+    userConfig.name = searchForm.name
+    getUserData(userConfig);
 }
 
 // #region 表格数据
@@ -71,6 +83,7 @@ const tableLabel = ref([{
     label: '地址',
     width: 300,
 }])
+
 const tableData = ref<{
     name: string;
     age: number;
@@ -79,6 +92,8 @@ const tableData = ref<{
     birth: string;
     addr: string;
 }[]>([])
+
+
 
 async function getUserData(searchForm?: { name: string } | undefined) {
     try {
@@ -90,9 +105,18 @@ async function getUserData(searchForm?: { name: string } | undefined) {
                 item.labelSex = item.sex === 1 ? '男' : '女';
             })
         }
+        if (res.code === 200) {
+            userConfig.total = res.result.data.count;
+        }
     } catch (error) {
         console.error('获取表格数据失败:', error);
     }
+}
+
+const handleCurrentChange = (val: number) => {
+    console.log(`current page: ${val}`)
+    userConfig.page = val
+    getUserData(userConfig);
 }
 // #endregion 表格数据
 
@@ -100,9 +124,20 @@ onMounted(() => {
     getUserData();
 })
 </script>
+
 <style scoped>
 .search {
     display: flex;
     justify-content: space-between;
+}
+
+.list {
+    position: relative;
+
+    .pagination {
+        margin-top: 5px;
+        position: absolute;
+        right: 0;
+    }
 }
 </style>
