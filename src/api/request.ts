@@ -50,7 +50,7 @@ service.interceptors.response.use(
 function request(options: AxiosRequestConfig) {
   options.method = options.method || 'get'
   if (options.method.toLowerCase() === 'get') {
-    options.params = options.params
+    options.params = options.data
   }
 
   // 在mock模式下，不设置baseURL，让Mock.js拦截请求

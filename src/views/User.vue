@@ -51,7 +51,7 @@ const searchForm = reactive({
 const userConfig = reactive({
     name: '',
     total: 0,
-    page: 0
+    page: 1
 })
 
 
