@@ -1,24 +1,37 @@
 <template>
-  <el-dialog v-model="localDialogVisible" title="添加用户" width="500">
-    <el-form :model="form">
-      <el-form-item label="姓名" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="年龄" :label-width="formLabelWidth">
-        <el-input v-model="form.age" type="number" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-select v-model="form.sex" placeholder="请选择性别">
-          <el-option label="男" :value="1" />
-          <el-option label="女" :value="2" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="出生日期" :label-width="formLabelWidth">
-        <el-date-picker v-model="form.birth" type="date" placeholder="选择日期" />
-      </el-form-item>
-      <el-form-item label="地址" :label-width="formLabelWidth">
-        <el-input v-model="form.addr" autocomplete="off" />
-      </el-form-item>
+  <el-dialog v-model="localDialogVisible" title="添加用户" width="800">
+    <el-form :model="form" :inline="true">
+      <el-row :span="24">
+        <el-col :span="12">
+          <el-form-item label="姓名" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label=" 年龄" :label-width="formLabelWidth">
+            <el-input v-model="form.age" type="number" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="性别" :label-width="formLabelWidth" style="display: flex;">
+            <el-select v-model="form.sex" placeholder="请选择性别">
+              <el-option label="男" :value="1" />
+              <el-option label="女" :value="2" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="出生日期" :label-width="formLabelWidth">
+            <el-date-picker v-model="form.birth" type="date" placeholder="选择日期" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="地址" :label-width="formLabelWidth">
+            <el-input v-model="form.addr" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+
+      </el-row>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -31,7 +44,7 @@
   </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
