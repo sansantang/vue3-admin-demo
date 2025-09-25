@@ -125,18 +125,16 @@ const tableData = ref<{
 
 
 
-async function getUserData(searchForm?: { name: string } | undefined) {
+async function getUserData(searchForm?: { name: string } | null) {
   try {
     const res = await proxy!.$userApi.getUserData(searchForm);
     console.log(res);
     if (res.code === 200) {
-      tableData.value = res.result.data.list;
+      tableData.value = res.result.list;
       tableData.value.forEach(item => {
         item.labelSex = item.sex === 1 ? '男' : '女';
       })
-    }
-    if (res.code === 200) {
-      userConfig.total = res.result.data.count;
+      userConfig.total = res.result.count;
     }
   } catch (error) {
     console.error('获取表格数据失败:', error);

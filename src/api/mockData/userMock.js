@@ -49,11 +49,8 @@ export default {
       (item, index) => index < limit * page && index >= limit * (page - 1),
     )
     return {
-      code: 200,
-      data: {
-        list: pageList,
-        count: mockList.length, // 数据总条数需要返回
-      },
+      list: pageList,
+      count: mockList.length, // 数据总条数需要返回
     }
   },
   /**
