@@ -5,7 +5,7 @@ export default {
     return request({
       url: '/api/user/getUserData',
       method: 'get',
-      data: config,
+      params: config,
     })
   },
 }
