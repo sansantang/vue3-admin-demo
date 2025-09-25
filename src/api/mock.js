@@ -24,5 +24,12 @@ Mock.mock(/\/api\/user\/getUserData.*$/, 'get', (options) => {
   }
 })
 
+Mock.mock(/\/api\/user\/deleteUser.*$/, 'get', (options) => {
+  return {
+    code: 200,
+    result: userMock.deleteUser(options),
+  }
+})
+
 // 添加一个默认导出，确保模块被正确加载
 export default Mock

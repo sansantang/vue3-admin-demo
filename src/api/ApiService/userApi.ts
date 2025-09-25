@@ -8,4 +8,12 @@ export default {
       data: config,
     })
   },
+
+  deleteUser(data: object) {
+    return request({
+      url: '/api/user/deleteUser',
+      method: 'get',
+      data,
+    })
+  },
 }

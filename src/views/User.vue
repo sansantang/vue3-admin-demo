@@ -15,11 +15,11 @@
             <el-table-column v-for="item in tableLabel" :key="item.prop" :prop="item.prop" :label="item.label"
                 :width="item.width ? item.width : ''" />
             <el-table-column fixed="right" label="操作" min-width="120">
-                <template #default>
+                <template #default="scope">
                     <el-button type="primary" size="small" @click="handleClick">
                         编辑
                     </el-button>
-                    <el-button type="danger" size="small">删除</el-button>
+                    <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -33,7 +33,7 @@
 <script setup lang="ts">
 
 import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
-import type { FormInstance } from 'element-plus'
+import { ElMessageBox, type FormInstance } from 'element-plus'
 
 const instance = getCurrentInstance();
 
@@ -66,6 +66,25 @@ const submitForm = (formEl: FormInstance | undefined) => {
 const handleClick = () => {
     console.log('click')
 }
+
+const handleDelete = async (index: number, row: { id: string }) => {
+    try {
+        ElMessageBox.confirm('确定删除该用户吗？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }).then(async () => {
+            const res = await proxy!.$userApi.deleteUser({ id: row.id });
+            console.log(res);
+            if (res.code === 200) {
+                tableData.value.splice(index, 1);
+            }
+        });
+    } catch (error) {
+        console.error('删除用户失败:', error);
+    }
+}
+
 const tableLabel = ref([{
     prop: 'name',
     label: '姓名',
