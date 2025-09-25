@@ -1,6 +1,6 @@
 // 整个项目API的统一管理
 
-import request from './request'
+import request from '../request'
 
 export default {
   getTableData() {
