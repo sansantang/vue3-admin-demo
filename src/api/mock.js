@@ -18,7 +18,8 @@ Mock.mock('/api/home/getChartData', 'get', {
 })
 
 Mock.mock('/api/user/getUserData', 'get', {
-  reuslt: userMock.getUserList(),
+  code: 200,
+  result: userMock.getUserList(),
 })
 
 // 添加一个默认导出，确保模块被正确加载
