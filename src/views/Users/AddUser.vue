@@ -66,7 +66,7 @@ const props = defineProps({
     default: 'add'
   },
   userData: {
-    type: Object,
+    type: Object as () => RuleForm,
     default: () => ({})
   }
 })
@@ -90,7 +90,7 @@ watch(() => localDialogVisible.value, (newVal) => {
 })
 
 // 在其他watch之后添加对userData的监听
-watch(() => props.userData, (newVal) => {
+watch(() => props.userData, (newVal: RuleForm) => {
   console.log('newVal开始', newVal)
 
   if (newVal && Object.keys(newVal).length > 0 && props.action === 'edit') {
@@ -108,7 +108,7 @@ watch(() => props.userData, (newVal) => {
 
 const formLabelWidth = '120px'
 
-const form = ref({
+const form = ref<RuleForm>({
   name: '',
   age: '',
   sex: 1,
