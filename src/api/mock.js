@@ -25,5 +25,7 @@ Mock.mock(/\/api\/user\/getUserData.*$/, 'get', (options) => {
 })
 
 Mock.mock('/api/user/createUser', 'post', userMock.createUser)
+
+Mock.mock('/api/user/updateUser', 'post', userMock.updateUser)
 // 添加一个默认导出，确保模块被正确加载
 export default Mock

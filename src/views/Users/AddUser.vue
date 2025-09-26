@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="localDialogVisible" title="添加用户" width="800">
+  <el-dialog v-model="localDialogVisible" :title="action === 'add' ? '添加用户' : '编辑用户'" width="800">
     <el-form ref="formRef" :model="form" :inline="true" :rules="rules">
       <el-row :span="24">
         <el-col :span="12">
@@ -8,15 +8,16 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label=" 年龄" :label-width="formLabelWidth">
+          <el-form-item label=" 年龄" :label-width="formLabelWidth" prop="age">
             <el-input v-model="form.age" type="number" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="性别" :label-width="formLabelWidth" style="display: flex;">
-            <el-select v-model="form.sex" placeholder="请选择性别">
+          <el-form-item label="性别" :label-width="formLabelWidth" prop="sex" style="display: flex;">
+            <!-- 确保el-select的value和el-option的value类型一致 -->
+            <el-select v-model="form.sex" placeholder="请选择性别" clearable>
               <el-option label="男" :value="1" />
-              <el-option label="女" :value="2" />
+              <el-option label="女" :value="0" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -59,8 +60,17 @@ const props = defineProps({
   dialogVisible: {
     type: Boolean,
     default: false
+  },
+  action: {
+    type: String,
+    default: 'add'
+  },
+  userData: {
+    type: Object,
+    default: () => ({})
   }
 })
+
 
 const emit = defineEmits(['update:dialogVisible', 'callback:refreshTable'])
 
@@ -78,6 +88,23 @@ watch(() => localDialogVisible.value, (newVal) => {
     emit('update:dialogVisible', newVal)
   }
 })
+
+// 在其他watch之后添加对userData的监听
+watch(() => props.userData, (newVal) => {
+  console.log('newVal开始', newVal)
+
+  if (newVal && Object.keys(newVal).length > 0 && props.action === 'edit') {
+    // 深拷贝用户数据到表单中
+    form.value = { ...newVal }
+    // 确保age字段类型正确（根据表单定义，age应该是字符串）
+    form.value.age = newVal.age ? String(newVal.age) : ''
+    // 确保birth字段格式正确
+    if (newVal.birth) {
+      form.value.birth = newVal.birth
+    }
+    console.log('newVal结束', newVal)
+  }
+}, { immediate: true, deep: true })
 
 const formLabelWidth = '120px'
 
@@ -107,10 +134,9 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: '请输入姓名', trigger: 'blur' },
     { min: 2, max: 10, message: '长度应为 2 到 10 个字符', trigger: 'blur' },
   ],
-  // age: [
-  //   { required: true, message: '请输入年龄', trigger: 'blur' },
-  //   { type: 'number', message: '年龄必须为数字', trigger: 'blur' },
-  // ],
+  age: [
+    { required: true, message: '请输入年龄', trigger: 'blur' },
+  ],
   // sex: [
   //   { required: true, message: '请选择性别', trigger: 'change' },
   // ],
@@ -159,17 +185,29 @@ const submitForm = async () => {
 
       // 这里可以添加表单验证和提交逻辑
       console.log('提交的表单数据:', formData)
-      proxy!.$userApi.createUser(formData).then(res => {
-        if (res.code === 200) {
-          (formRef.value as FormInstance).resetFields() //重置表单
-          emit('callback:refreshTable') //父组件刷新表格
-          // 提交成功后关闭对话框
-          localDialogVisible.value = false
-        } else {
-          ElMessage.error('添加用户失败')
-        }
-      })
-
+      if (props.action === 'add') {
+        proxy!.$userApi.createUser(formData).then(res => {
+          if (res.code === 200) {
+            (formRef.value as FormInstance).resetFields() //重置表单
+            emit('callback:refreshTable') //父组件刷新表格
+            // 提交成功后关闭对话框
+            localDialogVisible.value = false
+          } else {
+            ElMessage.error('添加用户失败')
+          }
+        })
+      } else {
+        proxy!.$userApi.updateUser(formData).then(res => {
+          if (res.code === 200) {
+            (formRef.value as FormInstance).resetFields() //重置表单
+            emit('callback:refreshTable') //父组件刷新表格
+            // 提交成功后关闭对话框
+            localDialogVisible.value = false
+          } else {
+            ElMessage.error('更新用户失败')
+          }
+        })
+      }
     } else {
       console.log('error submit!', fields)
     }
@@ -181,6 +219,20 @@ const submitForm = async () => {
 // 关闭对话框
 const closeDialog = () => {
   localDialogVisible.value = false
+
+  // 重置表单数据和验证状态
+  if (formRef.value) {
+    (formRef.value as FormInstance).resetFields()
+  }
+
+  // 额外重置表单数据对象（确保完全清空）
+  form.value = {
+    name: '',
+    age: '',
+    sex: 1, // 默认值设为男
+    birth: '',
+    addr: ''
+  };
 }
 
 </script>

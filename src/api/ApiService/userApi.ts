@@ -24,4 +24,11 @@ export default {
       data,
     })
   },
+  updateUser(data: object) {
+    return request({
+      url: '/api/user/updateUser',
+      method: 'post',
+      data,
+    })
+  },
 }

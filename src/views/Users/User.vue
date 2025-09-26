@@ -16,7 +16,7 @@
         :width="item.width ? item.width : ''" />
       <el-table-column fixed="right" label="操作" min-width="120">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="handleClick">
+          <el-button type="primary" size="small" @click="handleEditClick(scope.row)">
             编辑
           </el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -30,8 +30,8 @@
   </div>
 
   <!-- 引入AddUser组件并传递dialogVisible属性 -->
-  <AddUser :dialogVisible="dialogAddUserFormVisible" @update:dialogVisible="dialogAddUserFormVisible = $event"
-    @callback:refreshTable="getUserData" />
+  <AddUser :dialogVisible="dialogAddUserFormVisible" :action="action" :userData="userData"
+    @update:dialogVisible="dialogAddUserFormVisible = $event" @callback:refreshTable="getUserData" />
 </template>
 
 <script setup lang="ts">
@@ -68,8 +68,16 @@ const submitForm = (formEl: FormInstance | undefined) => {
 }
 
 // #region 表格数据
-const handleClick = () => {
-  console.log('click')
+const action = ref('add');
+const userData = ref({});
+//编辑
+const handleEditClick = async (row) => {
+  action.value = 'edit';
+  dialogAddUserFormVisible.value = true
+  console.log('row', row)
+  Object.assign(userData.value, { ...row })
+  console.log('userData.value', userData.value)
+
 }
 
 const handleDelete = async (index: number, row: { id: string }) => {
@@ -93,6 +101,7 @@ const handleDelete = async (index: number, row: { id: string }) => {
 // #region 新增用户
 const dialogAddUserFormVisible = ref(false)
 const handleAddUser = () => {
+  action.value = 'add';
   dialogAddUserFormVisible.value = true
 };
 // #endregion 新增用户
