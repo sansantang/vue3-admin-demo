@@ -1,0 +1,11 @@
+<script setup lang="ts">
+
+</script>
+
+<template>
+  <div class="">
+    商品
+  </div>
+</template>
+
+<style scoped></style>

@@ -27,5 +27,9 @@ export const useMenuStore = defineStore('menuStore', () => {
     console.log(tags.value)
   }
 
-  return { isCollapse, tags, changeIsCollapse, selectMenuTotags }
+  function removTag(item: any) {
+    tags.value = tags.value.filter((tag) => tag.name !== item.name)
+  }
+
+  return { isCollapse, tags, changeIsCollapse, selectMenuTotags, removTag }
 })
