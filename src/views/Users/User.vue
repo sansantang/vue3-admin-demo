@@ -30,7 +30,8 @@
   </div>
 
   <!-- 引入AddUser组件并传递dialogVisible属性 -->
-  <AddUser :dialogVisible="dialogAddUserFormVisible" @update:dialogVisible="dialogAddUserFormVisible = $event" />
+  <AddUser :dialogVisible="dialogAddUserFormVisible" @update:dialogVisible="dialogAddUserFormVisible = $event"
+    @callback:refreshTable="getUserData" />
 </template>
 
 <script setup lang="ts">

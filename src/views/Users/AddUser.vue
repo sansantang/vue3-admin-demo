@@ -1,9 +1,9 @@
 <template>
   <el-dialog v-model="localDialogVisible" title="添加用户" width="800">
-    <el-form :model="form" :inline="true">
+    <el-form ref="formRef" :model="form" :inline="true" :rules="rules">
       <el-row :span="24">
         <el-col :span="12">
-          <el-form-item label="姓名" :label-width="formLabelWidth">
+          <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
             <el-input v-model="form.name" autocomplete="off" />
           </el-form-item>
         </el-col>
@@ -45,7 +45,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { ref, watch, defineProps, defineEmits, reactive, getCurrentInstance } from 'vue'
+
+const instance = getCurrentInstance();
+
+if (!instance) {
+  throw new Error('getCurrentInstance() returned null');
+}
+const { proxy } = instance;
 
 const props = defineProps({
   dialogVisible: {
@@ -54,7 +62,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:dialogVisible'])
+const emit = defineEmits(['update:dialogVisible', 'callback:refreshTable'])
 
 // 本地对话框可见性状态
 const localDialogVisible = ref(false)
@@ -81,18 +89,100 @@ const form = ref({
   addr: ''
 })
 
+// #region 表单验证
+
+// 表单实例引用
+const formRef = ref<FormInstance>()
+
+interface RuleForm {
+  name: string,
+  age: string,
+  sex: number,
+  birth: string,
+  addr: string
+}
+
+const rules = reactive<FormRules<RuleForm>>({
+  name: [
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+    { min: 2, max: 10, message: '长度应为 2 到 10 个字符', trigger: 'blur' },
+  ],
+  // age: [
+  //   { required: true, message: '请输入年龄', trigger: 'blur' },
+  //   { type: 'number', message: '年龄必须为数字', trigger: 'blur' },
+  // ],
+  // sex: [
+  //   { required: true, message: '请选择性别', trigger: 'change' },
+  // ],
+  // birth: [
+  //   { required: true, message: '请选择出生日期', trigger: 'change' },
+  // ],
+  // addr: [
+  //   { required: true, message: '请输入地址', trigger: 'blur' },
+  //   { min: 5, max: 100, message: '地址长度应为 5 到 100 个字符', trigger: 'blur' },
+  // ]
+})
+
+const formDate = (dateInput: string | Date): string => {
+  let birthFormatted = '';
+  if (typeof dateInput === 'object' && dateInput instanceof Date) {
+    birthFormatted = `${dateInput.getFullYear()}-${(dateInput.getMonth() + 1).toString().padStart(2, '0')}-${dateInput.getDate().toString().padStart(2, '0')}`;
+  } else if (typeof dateInput === 'string') {
+    // 如果是字符串，尝试解析为日期
+    const date = new Date(dateInput);
+    if (!isNaN(date.getTime())) {
+      birthFormatted = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    } else {
+      birthFormatted = dateInput;
+    }
+  }
+  return birthFormatted;
+}
+
+// 提交表单
+const submitForm = async () => {
+  if (!formRef.value) return
+  await formRef.value.validate((valid, fields) => {
+    if (valid) {
+      // 格式化日期为YYYY-MM-DD
+
+      console.log(typeof form.value.birth)
+      let birthFormatted = '';
+      if (form.value.birth) {
+        birthFormatted = formDate(form.value.birth)
+      }
+
+      const formData = {
+        ...form.value,
+        birth: birthFormatted
+      };
+
+      // 这里可以添加表单验证和提交逻辑
+      console.log('提交的表单数据:', formData)
+      proxy!.$userApi.createUser(formData).then(res => {
+        if (res.code === 200) {
+          (formRef.value as FormInstance).resetFields() //重置表单
+          emit('callback:refreshTable') //父组件刷新表格
+          // 提交成功后关闭对话框
+          localDialogVisible.value = false
+        } else {
+          ElMessage.error('添加用户失败')
+        }
+      })
+
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
+
+// #endregion
+
 // 关闭对话框
 const closeDialog = () => {
   localDialogVisible.value = false
 }
 
-// 提交表单
-const submitForm = () => {
-  // 这里可以添加表单验证和提交逻辑
-  console.log('提交的表单数据:', form.value)
-  // 提交成功后关闭对话框
-  localDialogVisible.value = false
-}
 </script>
 
 <style scoped></style>

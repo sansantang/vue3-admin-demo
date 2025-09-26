@@ -16,4 +16,12 @@ export default {
       data,
     })
   },
+
+  createUser(data: object) {
+    return request({
+      url: '/api/user/createUser',
+      method: 'post',
+      data,
+    })
+  },
 }
