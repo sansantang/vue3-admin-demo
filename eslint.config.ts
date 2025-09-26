@@ -19,4 +19,9 @@ export default defineConfigWithVueTs(
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
   skipFormatting,
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off', // 禁用该规则，允许使用 any
+    },
+  },
 )
