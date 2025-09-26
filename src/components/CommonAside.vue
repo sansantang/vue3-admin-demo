@@ -1,6 +1,6 @@
 <template>
   <el-aside :width="width">
-    <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-aside" default-active="2"
+    <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-aside" :default-active="route.path"
       text-color="#fff" @open="handleOpen" @close="handleClose" :collapse="isCollapse" :collapse-transition="false">
       <h3 v-show="!isCollapse">通用管理后台</h3>
       <h3 v-show="isCollapse">后台</h3>
@@ -12,14 +12,15 @@
             </el-icon>
             <span>{{ item.label }}</span>
           </template>
-          <el-menu-item v-for="children in item.children" :key="children.path" :index="children.path">
+          <el-menu-item v-for="children in item.children" :key="children.path" :index="children.path"
+            @click="handleGoRouter(children.path)">
             <el-icon>
               <component :is="children.icon" />
             </el-icon>
             {{ children.label }}
           </el-menu-item>
         </el-sub-menu>
-        <el-menu-item v-else :index="item.path">
+        <el-menu-item v-else :index="item.path" @click="handleGoRouter(item)">
           <el-icon>
             <component :is="item.icon" />
           </el-icon>
@@ -28,13 +29,16 @@
       </template>
     </el-menu>
   </el-aside>
+
 </template>
 
 <script setup lang="ts">
+
 import { computed, ref } from 'vue';
 import { useMenuStore } from '@/stores/useMenuStore';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 const router = useRouter()
+const route = useRoute()
 const isCollapse = computed(() => useMenuStore().isCollapse);
 const width = computed(() => isCollapse.value ? '64px' : '200px');
 const list = ref([
@@ -84,10 +88,15 @@ const list = ref([
 
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
-  router.push(key)
+
 }
 const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
+}
+
+const handleGoRouter = (item: any) => {
+  router.push(item.path)
+  useMenuStore().selectMenuTotags(item);
 }
 
 </script>

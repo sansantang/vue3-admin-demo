@@ -9,12 +9,12 @@ const routes = [
     children: [
       {
         path: '/home',
-        name: 'Home',
+        name: 'home',
         component: () => import('@/views/Home.vue'),
       },
       {
         path: '/user',
-        name: 'User',
+        name: 'user',
         component: () => import('@/views/Users/User.vue'),
       },
     ],
