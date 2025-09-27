@@ -13,6 +13,7 @@ if (!instance) {
   throw new Error('getCurrentInstance() returned null');
 }
 const { proxy } = instance;
+const store = useMenuStore();
 
 async function handleLogin() {
   console.log(loginForm)
@@ -20,9 +21,11 @@ async function handleLogin() {
   console.log(res);
   if (res.code === 200) {
     localStorage.setItem('token', res.data.token)
-    useMenuStore().updateMenuList(res.data.menuList)
+    // store.updateMenuList(res.data.menuList)
+    // console.log(store.menuList)
+    store.addMenus(res.data.menuList);
     router.push({
-      name: 'home'
+      path: '/home'
     })
   }
 }

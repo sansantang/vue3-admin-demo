@@ -4,7 +4,7 @@ const routes = [
   {
     path: '/',
     name: 'main',
-    redirect: '/home',
+    redirect: '/login',
     component: () => import('@/views/Main.vue'),
     children: [
       {
@@ -12,16 +12,16 @@ const routes = [
         name: 'home',
         component: () => import('@/views/Home.vue'),
       },
-      {
-        path: '/mall',
-        name: 'mall',
-        component: () => import('@/views/Mall.vue'),
-      },
-      {
-        path: '/user',
-        name: 'user',
-        component: () => import('@/views/Users/User.vue'),
-      },
+      // {
+      //   path: '/mall',
+      //   name: 'mall',
+      //   component: () => import('@/views/Mall.vue'),
+      // },
+      // {
+      //   path: '/user',
+      //   name: 'user',
+      //   component: () => import('@/views/Users/User.vue'),
+      // },
       // {
       //   path: '/user',
       //   name: 'user',

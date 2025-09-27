@@ -34,14 +34,21 @@
 
 <script setup lang="ts">
 
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useMenuStore } from '@/stores/useMenuStore';
 import { useRoute, useRouter } from 'vue-router';
+const store = useMenuStore()
 const router = useRouter()
 const route = useRoute()
-const isCollapse = computed(() => useMenuStore().isCollapse);
+const isCollapse = computed(() => store.isCollapse);
 const width = computed(() => isCollapse.value ? '64px' : '200px');
-const list = computed(() => useMenuStore().menuList);
+const list = computed(
+  () => {
+    // console.log('aside list', store.menuList)
+    console.log('aside router', router.getRoutes())
+    return store.menuList
+  }
+);
 
 // const list = ref([
 //   {
