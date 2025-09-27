@@ -1,13 +1,32 @@
-<script setup>
-import { reactive } from 'vue'
+<script setup lang="ts">
+import { reactive, getCurrentInstance } from 'vue'
+import { useRouter } from 'vue-router'
+import { useMenuStore } from '@/stores/useMenuStore'
+const router = useRouter()
 const loginForm = reactive({
   username: '',
   password: ''
 })
+const instance = getCurrentInstance();
 
-function handleLogin() {
-  console.log(loginForm)
+if (!instance) {
+  throw new Error('getCurrentInstance() returned null');
 }
+const { proxy } = instance;
+
+async function handleLogin() {
+  console.log(loginForm)
+  const res = await proxy!.$loginApi.login(loginForm);
+  console.log(res);
+  if (res.code === 200) {
+    localStorage.setItem('token', res.data.token)
+    useMenuStore().updateMenuList(res.data.menuList)
+    router.push({
+      name: 'home'
+    })
+  }
+}
+
 </script>
 
 <template>

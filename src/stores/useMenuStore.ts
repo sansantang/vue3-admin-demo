@@ -12,6 +12,11 @@ export const useMenuStore = defineStore('menuStore', () => {
       icon: 'home',
     },
   ])
+  const menuList = ref([])
+
+  function updateMenuList(list: any) {
+    menuList.value = list
+  }
 
   function changeIsCollapse() {
     isCollapse.value = !isCollapse.value
@@ -31,5 +36,13 @@ export const useMenuStore = defineStore('menuStore', () => {
     tags.value = tags.value.filter((tag) => tag.name !== item.name)
   }
 
-  return { isCollapse, tags, changeIsCollapse, selectMenuTotags, removTag }
+  return {
+    isCollapse,
+    tags,
+    menuList,
+    updateMenuList,
+    changeIsCollapse,
+    selectMenuTotags,
+    removTag,
+  }
 })
