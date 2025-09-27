@@ -18,6 +18,7 @@ export const useMenuStore = defineStore('menuStore', () => {
 
   function updateMenuList(list: any) {
     menuList.value = list
+    localStorage.setItem('menuList', JSON.stringify(list))
   }
 
   function addMenusAndRouter(router: any) {
@@ -68,29 +69,71 @@ export const useMenuStore = defineStore('menuStore', () => {
     return componentMap[componentName] || (() => import('@/views/Home.vue'))
   }
 
+  // 移除所有动态添加的路由
+  function removeDynamicRoutes() {
+    const mainRoute = router.getRoutes().find((route) => route.name === 'main')
+    if (mainRoute && mainRoute.children) {
+      // 保留首页路由，移除其他动态添加的路由
+      mainRoute.children = mainRoute.children.filter((child) => child.name === 'home')
+    }
+  }
+
   function addMenus(routerItem: any) {
-    const routes = router.getRoutes()
-    const findMain = routes.find((route) => route.name === 'main')
-    findMain.children = []
-    // findMain.children.push(...routerItem)
+    if (!routerItem || !Array.isArray(routerItem)) {
+      console.error('菜单数据无效:', routerItem)
+      return
+    }
+
+    // 先保存菜单数据
+    updateMenuList(routerItem)
+
+    // 移除所有动态路由（避免重复添加）
+    removeDynamicRoutes()
+
+    // 添加新的动态路由
     routerItem.forEach((menuItem: any) => {
       // 确保菜单项有必要的路由属性
       if (menuItem.path && menuItem.name) {
-        // 如果菜单项没有 component，添加一个默认的
-        const routeItem = {
-          ...menuItem,
-          component: resolveComponentByName(menuItem.name),
-        }
+        try {
+          // 构建正确的路由配置
+          const routeConfig = {
+            path: menuItem.path,
+            name: menuItem.name,
+            meta: {
+              label: menuItem.label,
+              icon: menuItem.icon,
+            },
+            // 使用组件解析函数
+            component: resolveComponentByName(menuItem.name),
+          }
 
-        // 添加到主路由的子路由中
-        findMain.children.push(routeItem)
+          // 使用 router.addRoute() 方法正确添加路由
+          router.addRoute('main', routeConfig)
+          console.log(`已添加路由: ${menuItem.name} -> ${menuItem.path}`)
+        } catch (error) {
+          console.error(`添加路由失败: ${menuItem.name}`, error)
+        }
       }
     })
-    console.log(router.getRoutes())
-    // console.log(items)
-    const newRoutes = router.getRoutes()
-    localStorage.setItem('router', JSON.stringify(newRoutes) || '')
-    menuList.value = routerItem
+
+    console.log('所有动态路由添加完成', router.getRoutes())
+  }
+
+  // 从 localStorage 恢复菜单和路由
+  function restoreFromLocalStorage() {
+    const savedMenuList = localStorage.getItem('menuList')
+    if (savedMenuList) {
+      try {
+        const menuListData = JSON.parse(savedMenuList)
+        addMenus(menuListData)
+        console.log('已从本地存储恢复菜单和路由')
+      } catch (error) {
+        console.error('恢复菜单数据失败:', error)
+        localStorage.removeItem('menuList')
+      }
+    } else {
+      console.log('本地存储中没有菜单数据')
+    }
   }
 
   function changeIsCollapse() {
@@ -121,5 +164,6 @@ export const useMenuStore = defineStore('menuStore', () => {
     changeIsCollapse,
     selectMenuTotags,
     removTag,
+    restoreFromLocalStorage,
   }
 })
