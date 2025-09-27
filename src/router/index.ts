@@ -4,30 +4,30 @@ const routes = [
   {
     path: '/',
     name: 'main',
-    redirect: '/login',
+    // redirect: '/login',
     component: () => import('@/views/Main.vue'),
-    children: [
-      {
-        path: '/home',
-        name: 'home',
-        component: () => import('@/views/Home.vue'),
-      },
-      // {
-      //   path: '/mall',
-      //   name: 'mall',
-      //   component: () => import('@/views/Mall.vue'),
-      // },
-      // {
-      //   path: '/user',
-      //   name: 'user',
-      //   component: () => import('@/views/Users/User.vue'),
-      // },
-      // {
-      //   path: '/user',
-      //   name: 'user',
-      //   component: () => import('@/views/Users/User.vue'),
-      // },
-    ],
+    // children: [
+    //   {
+    //     path: '/home',
+    //     name: 'home',
+    //     component: () => import('@/views/Home.vue'),
+    //   },
+    // {
+    //   path: '/mall',
+    //   name: 'mall',
+    //   component: () => import('@/views/Mall.vue'),
+    // },
+    // {
+    //   path: '/user',
+    //   name: 'user',
+    //   component: () => import('@/views/Users/User.vue'),
+    // },
+    // {
+    //   path: '/user',
+    //   name: 'user',
+    //   component: () => import('@/views/Users/User.vue'),
+    // },
+    // ],
   },
   {
     path: '/login',

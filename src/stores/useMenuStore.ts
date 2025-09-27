@@ -53,19 +53,20 @@ export const useMenuStore = defineStore('menuStore', () => {
     }
   }
 
-  function addMenus(routerItem: any) {
+  function addMenus(routerItem: object[]) {
     if (!routerItem || !Array.isArray(routerItem)) {
       console.error('菜单数据无效:', routerItem)
       return
     }
 
-    // 先保存菜单数据
+    // 1 先保存菜单数据
     updateMenuList(routerItem)
 
-    // 移除所有动态路由（避免重复添加）
+    // 2 移除所有动态路由（避免重复添加）
     removeDynamicRoutes()
+    console.log('所有动态路由删除完成', router.getRoutes())
 
-    // 添加新的动态路由
+    // 3 添加新的动态路由
     routerItem.forEach((menuItem: any) => {
       // 确保菜单项有必要的路由属性
       if (menuItem.path && menuItem.name) {

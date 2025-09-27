@@ -37,6 +37,7 @@
 import { computed } from 'vue';
 import { useMenuStore } from '@/stores/useMenuStore';
 import { useRoute, useRouter } from 'vue-router';
+import vuerouter from '@/router/index'
 const store = useMenuStore()
 const router = useRouter()
 const route = useRoute()
@@ -45,7 +46,7 @@ const width = computed(() => isCollapse.value ? '64px' : '200px');
 const list = computed(
   () => {
     // console.log('aside list', store.menuList)
-    console.log('aside router', router.getRoutes())
+    console.log('aside router', vuerouter.getRoutes())
     return store.menuList
   }
 );
