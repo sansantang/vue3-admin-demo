@@ -1,10 +1,9 @@
-import { useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import router from '@/router' // 直接导入路由实例
 
 //组合式写法
 export const useMenuStore = defineStore('menuStore', () => {
-  const router = useRouter()
   const isCollapse = ref(false)
   const tags = ref([
     {
@@ -19,39 +18,6 @@ export const useMenuStore = defineStore('menuStore', () => {
   function updateMenuList(list: any) {
     menuList.value = list
     localStorage.setItem('menuList', JSON.stringify(list))
-  }
-
-  function addMenusAndRouter(router: any) {
-    if (localStorage.getItem('router')) {
-      const list = JSON.parse(localStorage.getItem('router') || '')
-      //1 赋值给 menuList.value(Menu展示)
-      const findMainMenu = list.find((route) => route.name === 'main')
-      const routes = router.getRoutes()
-      const findMainRouter = routes.find((route) => route.name === 'main')
-      menuList.value = findMainMenu.children
-      console.log('addMenusAndRouter', findMainMenu.children)
-      findMainMenu.children.forEach((menuItem: any) => {
-        const t = findMainRouter.children.findIndex((item) => item.name === menuItem.name) > -1
-        if (t) {
-          return
-        }
-        // 确保菜单项有必要的路由属性
-        if (menuItem.path && menuItem.name) {
-          // 如果菜单项没有 component，添加一个默认的
-          const routeItem = {
-            ...menuItem,
-            component: resolveComponentByName(menuItem.name),
-          }
-
-          // 添加到主路由的子路由中
-          // findMain.children.push(routeItem)
-          findMainRouter.children.push(routeItem)
-        }
-      })
-      console.log('addMenusAndRouter', router.getRoutes())
-    } else {
-      return
-    }
   }
 
   // 根据组件名解析对应的组件文件路径
@@ -71,10 +37,19 @@ export const useMenuStore = defineStore('menuStore', () => {
 
   // 移除所有动态添加的路由
   function removeDynamicRoutes() {
-    const mainRoute = router.getRoutes().find((route) => route.name === 'main')
-    if (mainRoute && mainRoute.children) {
-      // 保留首页路由，移除其他动态添加的路由
-      mainRoute.children = mainRoute.children.filter((child) => child.name === 'home')
+    try {
+      // 确保路由实例存在且方法可用
+      if (router && typeof router.getRoutes === 'function') {
+        const mainRoute = router.getRoutes().find((route) => route.name === 'main')
+        if (mainRoute && mainRoute.children) {
+          // 保留首页路由，移除其他动态添加的路由
+          mainRoute.children = mainRoute.children.filter((child) => child.name === 'home')
+        }
+      } else {
+        console.warn('路由实例未正确初始化，无法移除动态路由')
+      }
+    } catch (error) {
+      console.error('移除动态路由失败:', error)
     }
   }
 
@@ -107,9 +82,13 @@ export const useMenuStore = defineStore('menuStore', () => {
             component: resolveComponentByName(menuItem.name),
           }
 
-          // 使用 router.addRoute() 方法正确添加路由
-          router.addRoute('main', routeConfig)
-          console.log(`已添加路由: ${menuItem.name} -> ${menuItem.path}`)
+          // 确保路由实例存在且方法可用
+          if (router && typeof router.addRoute === 'function') {
+            router.addRoute('main', routeConfig)
+            console.log(`已添加路由: ${menuItem.name} -> ${menuItem.path}`)
+          } else {
+            console.warn('路由实例未正确初始化，无法添加路由')
+          }
         } catch (error) {
           console.error(`添加路由失败: ${menuItem.name}`, error)
         }
@@ -160,7 +139,6 @@ export const useMenuStore = defineStore('menuStore', () => {
     menuList,
     updateMenuList,
     addMenus,
-    addMenusAndRouter,
     changeIsCollapse,
     selectMenuTotags,
     removTag,

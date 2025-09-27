@@ -18,15 +18,16 @@ app.config.globalProperties.$homeApi = homeApi
 app.config.globalProperties.$userApi = userApi
 app.config.globalProperties.$loginApi = loginApi
 app.use(createPinia())
+
+const stores = useMenuStore()
+stores.restoreFromLocalStorage()
 app.use(router)
 
 app.use(ElementPlus) //将 ElementPlus 插件注册到 Vue 应用中
-
-router.isReady().then(() => {
-  const stores = useMenuStore()
-  stores.restoreFromLocalStorage()
-  app.mount('#app')
-})
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+
+router.isReady().then(() => {
+  app.mount('#app')
+})
