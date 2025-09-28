@@ -13,6 +13,27 @@ import '@/api/mock'
 import 'default-passive-events'
 import { useMenuStore } from '@/stores/useMenuStore'
 
+//全局前置守卫beforeEach
+router.beforeEach((to, from, next) => {
+  console.log(router.getRoutes())
+  const token = localStorage.getItem('token')
+  if (to.path !== '/login' && !token) {
+    next({
+      path: '/login',
+    })
+    return
+  }
+
+  const filerRouter = router.getRoutes().filter((item) => item.path === to.path)
+  if (filerRouter.length === 0) {
+    next({
+      name: '404',
+    })
+    return
+  }
+  next()
+})
+
 const app = createApp(App)
 app.config.globalProperties.$homeApi = homeApi
 app.config.globalProperties.$userApi = userApi

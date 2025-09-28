@@ -4,8 +4,12 @@
 </template>
 <style scoped>
 .body-404 {
-  width: 100%;
-  height: 100%;
-  background-image: url('@/assets/images/404.png');
+  width: 100vw;
+  height: 100vh;
+  background: url('@/assets/images/404.png') no-repeat center center;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 </style>
