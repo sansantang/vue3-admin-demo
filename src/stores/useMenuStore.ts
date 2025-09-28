@@ -14,6 +14,7 @@ export const useMenuStore = defineStore('menuStore', () => {
     },
   ])
   const menuList = ref([])
+  const currentMenu = ref(null)
 
   function updateMenuList(list: any) {
     menuList.value = list
@@ -120,6 +121,18 @@ export const useMenuStore = defineStore('menuStore', () => {
     isCollapse.value = !isCollapse.value
   }
 
+  function selectMenu(item: any) {
+    if (item.name === 'home') {
+      currentMenu.value = null
+    } else {
+      if (item.children && item.children.length > 0) {
+        currentMenu.value = item.children[0]
+      } else {
+        currentMenu.value = item
+      }
+    }
+  }
+
   function selectMenuTotags(item: any) {
     const find = tags.value.find((tag) => tag.name === item.name)
     if (find) {
@@ -145,9 +158,11 @@ export const useMenuStore = defineStore('menuStore', () => {
     isCollapse,
     tags,
     menuList,
+    currentMenu,
     updateMenuList,
     addMenus,
     changeIsCollapse,
+    selectMenu,
     selectMenuTotags,
     removTag,
     restoreFromLocalStorage,

@@ -46,7 +46,7 @@ const width = computed(() => isCollapse.value ? '64px' : '200px');
 const list = computed(
   () => {
     // console.log('aside list', store.menuList)
-    console.log('aside router', vuerouter.getRoutes())
+    // console.log('aside router', vuerouter.getRoutes())
     return store.menuList
   }
 );
@@ -107,6 +107,8 @@ const handleClose = (key: string, keyPath: string[]) => {
 const handleGoRouter = (item: any) => {
   router.push(item.path)
   useMenuStore().selectMenuTotags(item);
+  useMenuStore().selectMenu(item);
+
 }
 
 </script>

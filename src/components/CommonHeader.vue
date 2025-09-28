@@ -7,7 +7,10 @@
         </el-icon>
       </el-button>
       <el-breadcrumb separator="/" class="breadcrumb">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item v-if="currentMenu" :to="{ path: currentMenu.path }">
+          {{ currentMenu.label }}
+        </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="r-content">
@@ -29,9 +32,13 @@
 <script setup lang="ts">
 const getImageUrl = new URL("https://img2.baidu.com/it/u=2318884743,3754999155&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500").href;
 import { useMenuStore } from '@/stores/useMenuStore'
+import { computed } from 'vue';
 const store = useMenuStore()
 const changeIsCollapse = store.changeIsCollapse;
-
+const currentMenu = computed(() => {
+  console.log('currentMenu', store.currentMenu)
+  return store.currentMenu
+})
 function logout() {
   store.logout()
 }

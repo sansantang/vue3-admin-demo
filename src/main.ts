@@ -15,7 +15,6 @@ import { useMenuStore } from '@/stores/useMenuStore'
 
 //全局前置守卫beforeEach
 router.beforeEach((to, from, next) => {
-  console.log(router.getRoutes())
   const token = localStorage.getItem('token')
   if (to.path !== '/login' && !token) {
     next({

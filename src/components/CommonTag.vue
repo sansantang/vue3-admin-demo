@@ -19,6 +19,7 @@ const tags = computed(() => useMenuStore().tags)
 const route = useRoute();
 const store = useMenuStore()
 function handleGoRouter(tag: any) {
+  store.selectMenu(tag)
   router.push(tag.path)
 }
 
