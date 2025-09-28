@@ -134,6 +134,13 @@ export const useMenuStore = defineStore('menuStore', () => {
     tags.value = tags.value.filter((tag) => tag.name !== item.name)
   }
 
+  function logout() {
+    localStorage.removeItem('menuList')
+    localStorage.removeItem('token')
+    removeDynamicRoutes()
+    router.push({ name: 'login' })
+  }
+
   return {
     isCollapse,
     tags,
@@ -144,5 +151,6 @@ export const useMenuStore = defineStore('menuStore', () => {
     selectMenuTotags,
     removTag,
     restoreFromLocalStorage,
+    logout,
   }
 })
